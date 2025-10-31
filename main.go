@@ -24,7 +24,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("You will be taking a quick math quiz.\n")
+	fmt.Println("You will be taking a quick math quiz.")
 
 	count := 0
 	correct := 0
@@ -32,8 +32,8 @@ func main() {
 
 	for _, record := range records {
 		count++
-		fmt.Println("Question", count, ": ")
-		fmt.Println(record[0], "=")
+		fmt.Print("Question ", count, " : ")
+		fmt.Print(record[0], " = ")
 		fmt.Scan(&i)
 
 		answer, err := strconv.Atoi(record[1])
