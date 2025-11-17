@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/csv"
 	"fmt"
@@ -27,6 +28,9 @@ func main() {
 	}
 
 	fmt.Println("You will be taking a quick math quiz.")
+
+	fmt.Println("Press Enter to start the quiz...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 
 	count := 0
 	correct := 0
