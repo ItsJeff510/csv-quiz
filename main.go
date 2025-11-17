@@ -30,44 +30,54 @@ func main() {
 
 	count := 0
 	correct := 0
-	var i int
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	fmt.Println("You have 30 seconds to complete the quiz. Start now!")
 
-	for {
-		select {
+	for _, record := range records {
+		count++
 
+		fmt.Print("Question ", count, ": ", record[0], " = ")
+
+		answerCh := make(chan int)
+
+		go func() {
+			var usrInput int
+			fmt.Scan(&usrInput)
+			answerCh <- usrInput
+		}()
+
+		select {
 		case <-ctx.Done():
 			fmt.Println("\nTime's up!")
-			fmt.Printf("You got %d out of %d correct.\n", correct, count)
-			fmt.Printf("You scored : %.2f%%\n", (float64(correct)/float64(count))*100)
+			printResults(count-1, correct)
 			return
 
-		default:
-			for _, record := range records {
-				count++
-				fmt.Print("Question ", count, " : ")
-				fmt.Print(record[0], " = ")
-				fmt.Scan(&i)
+		case usrAnswer := <-answerCh:
+			correctAnswer, _ := strconv.Atoi(record[1])
+			if err != nil {
+				fmt.Println("Invalid answer format. Skipping question.")
+				continue
+			}
 
-				answer, err := strconv.Atoi(record[1])
-				if err != nil {
-					fmt.Println("Error converting answer to integer:", err)
-					continue
-				}
-				if i == answer {
-					correct++
-				}
-				select {
-				case <-ctx.Done():
-					fmt.Println("\n⏳ Time's up! Quiz ended.")
-					return
-				default:
-				}
+			if usrAnswer == correctAnswer {
+				correct++
 			}
 		}
+	}
+
+	fmt.Println("Quiz completed!")
+	printResults(count, correct)
+}
+
+func printResults(total, correct int) {
+	fmt.Printf("You answered %d out of %d questions correctly.\n", correct, total)
+	if total > 0 {
+		percentage := (float64(correct) / float64(total)) * 100
+		fmt.Printf("Your score: %.2f%%\n", percentage)
+	} else {
+		fmt.Println("No questions were answered.")
 	}
 }
