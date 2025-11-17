@@ -44,9 +44,20 @@ func main() {
 		answerCh := make(chan int)
 
 		go func() {
-			var usrInput int
-			fmt.Scan(&usrInput)
-			answerCh <- usrInput
+			for {
+				var usrInput int
+				_, err := fmt.Scan(&usrInput)
+
+				if err != nil {
+					fmt.Println("Not a number, try again", err)
+					var dump string
+					fmt.Scanln(&dump)
+					fmt.Print("Question ", count, ": ", record[0], " = ")
+					continue
+				}
+				answerCh <- usrInput
+				return
+			}
 		}()
 
 		select {
